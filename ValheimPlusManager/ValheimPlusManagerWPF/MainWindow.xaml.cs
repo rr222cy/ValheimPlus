@@ -45,7 +45,7 @@ namespace ValheimPlusManager
                     installClientUpdateButton.Visibility = Visibility.Visible;
                     checkClientUpdatesButtons.Visibility = Visibility.Visible;
                     enableDisableValheimPlusGameClientButton.Visibility = Visibility.Visible;
-                    setClientPath.Visibility = Visibility.Hidden;
+                    setClientPathButton.Visibility = Visibility.Hidden;
                 }
                 else
                 {
@@ -56,7 +56,7 @@ namespace ValheimPlusManager
                     installClientUpdateButton.Visibility = Visibility.Hidden;
                     checkClientUpdatesButtons.Visibility = Visibility.Hidden;
                     enableDisableValheimPlusGameClientButton.Visibility = Visibility.Hidden;
-                    setClientPath.Visibility = Visibility.Hidden;
+                    setClientPathButton.Visibility = Visibility.Hidden;
                 }
             }
             else
@@ -69,7 +69,7 @@ namespace ValheimPlusManager
                 checkClientUpdatesButtons.Visibility = Visibility.Hidden;
                 enableDisableValheimPlusGameClientButton.Visibility = Visibility.Hidden;
                 installClientButton.Visibility = Visibility.Hidden;
-                setClientPath.Margin = new Thickness(16, 78, 0, 0);
+                setClientPathButton.Margin = new Thickness(16, 78, 0, 0);
             }
             if (serverPathCorrect)
             {
@@ -218,7 +218,7 @@ namespace ValheimPlusManager
             }
         }
 
-        private void setClientPath_Click(object sender, RoutedEventArgs e)
+        private void setClientPathButton_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new Microsoft.Win32.OpenFileDialog
             {
@@ -317,6 +317,27 @@ namespace ValheimPlusManager
         private void manageServerButton_Click(object sender, RoutedEventArgs e)
         {
             new ConfigurationManagerWindow(false).Show(); // Bool determines if user will manage conf. for server or game client
+        }
+
+        private void setServerPathButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = "Executeable|valheim_server.exe"
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                var fullPath = dialog.FileName;
+                string formattedPath = String.Format("{0}\\", Path.GetDirectoryName(fullPath));
+                string uriPath = new Uri(formattedPath).AbsolutePath.ToString();
+                uriPath = Uri.UnescapeDataString(uriPath);
+                Settings.ServerInstallationPath = uriPath;
+
+                SettingsDAL.UpdateSettings(Settings, true);
+
+                FetchSettings();
+            }
         }
 
         private void launchGameButton_Click(object sender, RoutedEventArgs e)
